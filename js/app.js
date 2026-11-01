@@ -227,3 +227,9 @@ filtro.addEventListener('change', mostrarTareas);
 orden.addEventListener('change', mostrarTareas);
 
 iniciar();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {
+    mostrarMensaje('No se pudo preparar la página para abrirla sin internet. Mantén esta pestaña abierta.', true);
+  });
+}
