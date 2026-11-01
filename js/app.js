@@ -1,3 +1,6 @@
+import { consultarTareas } from './api.js';
+import { leerTareas, guardarTareas } from './almacenamiento.js';
+
 const formulario = document.querySelector('#formulario');
 const titulo = document.querySelector('#titulo');
 const prioridad = document.querySelector('#prioridad');
@@ -26,9 +29,16 @@ function limpiarFormulario() {
 }
 
 function guardarCambios(nuevasTareas) {
-  tareas = nuevasTareas;
-  mostrarTareas();
-  return true;
+  try {
+    guardarTareas(nuevasTareas);
+    tareas = nuevasTareas;
+    mostrarTareas();
+    return true;
+  } catch {
+    mostrarMensaje('No se pudo guardar el cambio. Revisa el almacenamiento del navegador.', true);
+    mostrarTareas();
+    return false;
+  }
 }
 
 function editarTarea(tarea) {
@@ -179,8 +189,41 @@ cancelar.addEventListener('click', () => {
   mostrarMensaje('Edición cancelada.');
 });
 
+async function iniciar() {
+  guardar.disabled = true;
+  mostrarMensaje('Cargando tareas...');
+  let guardadas;
+
+  try {
+    guardadas = leerTareas();
+  } catch {
+    mostrarMensaje('No se pueden leer las tareas guardadas. Revisa el almacenamiento antes de continuar.', true);
+    return;
+  }
+
+  if (guardadas !== null) {
+    tareas = guardadas;
+    mostrarMensaje('Tareas guardadas recuperadas.');
+  } else {
+    try {
+      tareas = await consultarTareas();
+      try {
+        guardarTareas(tareas);
+        mostrarMensaje('Tareas importadas y guardadas.');
+      } catch {
+        mostrarMensaje('Se cargaron las tareas, pero no se pudieron guardar en el navegador.', true);
+      }
+    } catch {
+      mostrarMensaje('No se pudieron cargar las tareas de internet. Puedes agregar tus propias tareas.', true);
+    }
+  }
+
+  mostrarTareas();
+  guardar.disabled = false;
+}
+
 busqueda.addEventListener('input', mostrarTareas);
 filtro.addEventListener('change', mostrarTareas);
 orden.addEventListener('change', mostrarTareas);
 
-mostrarTareas();
+iniciar();
