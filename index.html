@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskManager</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="subtitulo">Actividad Integradora 2</p>
+      <h1>TaskManager</h1>
+      <p>Organiza tus tareas y revisa lo que tienes pendiente.</p>
+    </header>
+
+    <section class="resumen" aria-label="Resumen de tareas">
+      <div><span>Total</span><strong id="total">0</strong></div>
+      <div><span>Pendientes</span><strong id="pendientes">0</strong></div>
+      <div><span>Completadas</span><strong id="completadas">0</strong></div>
+    </section>
+
+    <section class="panel" aria-labelledby="titulo-formulario">
+      <h2 id="titulo-formulario">Nueva tarea</h2>
+      <form id="formulario" novalidate>
+        <div class="campo titulo-campo">
+          <label for="titulo">Título</label>
+          <input id="titulo" type="text" placeholder="Escribe una tarea" required>
+        </div>
+        <div class="campo">
+          <label for="prioridad">Prioridad</label>
+          <select id="prioridad">
+            <option value="Alta">Alta</option>
+            <option value="Media" selected>Media</option>
+            <option value="Baja">Baja</option>
+          </select>
+        </div>
+        <button id="guardar" type="submit">Agregar tarea</button>
+        <button id="cancelar" type="button" class="secundario" hidden>Cancelar</button>
+      </form>
+    </section>
+
+    <p id="mensaje" role="status" aria-live="polite"></p>
+
+    <section class="panel" aria-labelledby="titulo-lista">
+      <h2 id="titulo-lista">Mis tareas</h2>
+      <div class="controles">
+        <div class="campo titulo-campo">
+          <label for="busqueda">Buscar por título</label>
+          <input id="busqueda" type="search" placeholder="Buscar tarea">
+        </div>
+        <div class="campo">
+          <label for="filtro">Estado</label>
+          <select id="filtro">
+            <option value="todas">Todas</option>
+            <option value="pendientes">Pendientes</option>
+            <option value="completadas">Completadas</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="orden">Ordenar por</label>
+          <select id="orden">
+            <option value="fecha">Fecha: más recientes primero</option>
+            <option value="prioridad">Prioridad: alta a baja</option>
+          </select>
+        </div>
+      </div>
+      <ul id="lista"></ul>
+      <p id="vacio" class="vacio">No hay tareas para mostrar.</p>
+    </section>
+  </main>
+</body>
+</html>
