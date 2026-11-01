@@ -5,6 +5,9 @@ const guardar = document.querySelector('#guardar');
 const cancelar = document.querySelector('#cancelar');
 const lista = document.querySelector('#lista');
 const mensaje = document.querySelector('#mensaje');
+const busqueda = document.querySelector('#busqueda');
+const filtro = document.querySelector('#filtro');
+const orden = document.querySelector('#orden');
 
 let tareas = [];
 let idEnEdicion = null;
@@ -62,11 +65,40 @@ function cambiarEstado(tarea) {
   }
 }
 
+function obtenerTareasVisibles() {
+  const texto = busqueda.value.trim().toLowerCase();
+  const visibles = tareas.filter((tarea) => {
+    const coincideTitulo = tarea.titulo.toLowerCase().includes(texto);
+    const coincideEstado = filtro.value === 'todas'
+      || (filtro.value === 'pendientes' && !tarea.completada)
+      || (filtro.value === 'completadas' && tarea.completada);
+    return coincideTitulo && coincideEstado;
+  });
+
+  if (orden.value === 'prioridad') {
+    const valores = { Alta: 1, Media: 2, Baja: 3 };
+    visibles.sort((primera, segunda) => valores[primera.prioridad] - valores[segunda.prioridad]);
+  } else {
+    visibles.sort((primera, segunda) => new Date(segunda.fecha) - new Date(primera.fecha));
+  }
+
+  return visibles;
+}
+
+function actualizarResumen() {
+  const completadas = tareas.filter((tarea) => tarea.completada).length;
+  document.querySelector('#total').textContent = tareas.length;
+  document.querySelector('#pendientes').textContent = tareas.length - completadas;
+  document.querySelector('#completadas').textContent = completadas;
+}
+
 function mostrarTareas() {
   lista.replaceChildren();
-  document.querySelector('#vacio').hidden = tareas.length > 0;
+  actualizarResumen();
+  const visibles = obtenerTareasVisibles();
+  document.querySelector('#vacio').hidden = visibles.length > 0;
 
-  tareas.forEach((tarea) => {
+  visibles.forEach((tarea) => {
     const elemento = document.createElement('li');
     elemento.className = 'tarea';
     elemento.classList.toggle('terminada', tarea.completada);
@@ -146,5 +178,9 @@ cancelar.addEventListener('click', () => {
   limpiarFormulario();
   mostrarMensaje('Edición cancelada.');
 });
+
+busqueda.addEventListener('input', mostrarTareas);
+filtro.addEventListener('change', mostrarTareas);
+orden.addEventListener('change', mostrarTareas);
 
 mostrarTareas();
